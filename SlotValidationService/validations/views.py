@@ -27,7 +27,6 @@ class FiniteValuesValidationView(views.APIView):
     """
     Entity validation performed over finite values
     """
-
     renderer_classes = [JSONRenderer, ]
     parser_classes = (
         # will implicitly utilize the custom parser
@@ -39,12 +38,44 @@ class FiniteValuesValidationView(views.APIView):
     def post(self, request, *args, **kwargs):
         """
         Override the post method for POST requests
+
+        :param request: the http request object
         """
         try:
+            # parse the input payload
             request.data
         except ParseError as e:
             return Response(
                 get_error_response_dict(e.detail),
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        # TODO: business logic
         return Response({'status': 'success'})
+
+class NumericValuesValidationView(views.APIView):
+    """
+    Entity validation performed over numeric values
+    """
+    renderer_classes = [JSONRenderer, ]
+    parser_classes = (
+        request_parsers.NumericValidationJsonParser,
+    )
+    content_negotiation_class = request_parsers.IgnoreClientContentNegotiation
+
+    def post(self, request, *args, **kwargs):
+        """
+        Override the post method for POST requests
+
+        :param request: the http request object
+        """
+        try:
+            # parse the input payload
+            request.data
+        except ParseError as e:
+            return Response(
+                get_error_response_dict(e.detail),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # TODO: business logic
+        return Response({'status': 'success'})
+

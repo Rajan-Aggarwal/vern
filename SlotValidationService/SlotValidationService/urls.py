@@ -19,5 +19,6 @@ from validations import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('validate/finite/', views.FiniteValuesValidationView.as_view())
+    path('validate/finite/', views.FiniteValuesValidationView.as_view()),
+    path('validate/numeric/', views.NumericValuesValidationView.as_view()),
 ]
