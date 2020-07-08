@@ -11,6 +11,8 @@ from rest_framework import negotiation
 
 from . import schemas
 
+
+
 class FiniteValidationJsonParser(parsers.JSONParser):
     """
     Custom parser to parse request JSON according to
@@ -35,8 +37,9 @@ class FiniteValidationJsonParser(parsers.JSONParser):
         )
         try:
             jsonschema.validate(data, schemas.finite_values_json)
-        except ValueError as error:
-            raise ParseError(detail=error.message)
+        except Exception as error:
+            print(str(error))
+            raise ParseError(detail='JSON validation failed. Check logs...')
         else:
             return data
 
