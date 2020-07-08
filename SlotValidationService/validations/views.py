@@ -2,7 +2,7 @@
 Controller for the service
 """
 import logging
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework import views, status
@@ -44,9 +44,9 @@ class FiniteValuesValidationView(views.APIView):
         try:
             # parse the input payload
             request.data
-        except ParseError as e:
+        except ValidationError as e:
             return Response(
-                get_error_response_dict(e.detail),
+                get_error_response_dict(e.detail[0]),
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # TODO: business logic
@@ -71,9 +71,9 @@ class NumericValuesValidationView(views.APIView):
         try:
             # parse the input payload
             request.data
-        except ParseError as e:
+        except ValidationError as e:
             return Response(
-                get_error_response_dict(e.detail),
+                get_error_response_dict(e.detail[0]),
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # TODO: business logic

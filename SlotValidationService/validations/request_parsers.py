@@ -7,7 +7,7 @@ content types in the API
 import logging
 import jsonschema
 import ast
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ValidationError
 from rest_framework import parsers
 from rest_framework import negotiation
 
@@ -42,7 +42,14 @@ class FiniteValidationJsonParser(parsers.JSONParser):
             jsonschema.validate(data, schemas.finite_values_json)
         except Exception as error:
             logger.error('Error while validating the json - {}'.format(error))
-            raise ParseError(detail='JSON validation failed. Check logs...')
+            raise ValidationError(detail='JSON validation failed. Check logs...')
+        if data['pick_first'] == data['support_multiple']:
+            # both being equal makes no sense
+            logger.error('Both pick_first and support_multiple are {}'.format(data['pick_first']))
+            raise ValidationError(detail='pick_first and support_multiple both cannot be {}'.format(
+                    data['pick_first'],
+                )
+            )
         return data
 
 
@@ -85,16 +92,23 @@ class NumericValidationJsonParser(parsers.JSONParser):
             jsonschema.validate(data, schemas.numeric_values_json)
         except Exception as error:
             logger.error('Error while validating the json - {}'.format(error))
-            raise ParseError(detail='JSON validation failed. Check logs...')
+            raise ValidationError(detail='JSON validation failed. Check logs...')
         # validate if 
         #   1. the constraint is a python expression
         #   2. var_name is present in the expression
         if not self.is_constraint_valid(data['constraint']):
             logger.error('Constraint is not a valid python expression')
-            raise ParseError('Constraint should be a valid python expression')
+            raise ValidationError('Constraint should be a valid python expression')
         if data['var_name'] not in data['constraint']:
             logger.error('Var name is not present in the expression.')
-            raise ParseError(detail='Var name should be present in the constraint')
+            raise ValidationError(detail='Var name should be present in the constraint')
+        if data['pick_first'] == data['support_mutiple']:
+            # both being equal makes no sense
+            logger.error('Both pick_first and support_multiple are {}'.format(data['pick_first']))
+            raise ValidationError(detail='pick_first and support_multiple both cannot be {}'.format(
+                    data['pick_first'],
+                )
+            )
         return data
 
 
