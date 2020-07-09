@@ -118,7 +118,6 @@ class NumericValuesValidationView(FiniteValuesValidationView):
         :param request_dict: a dictionary of request json
         :return: response dictionary
         """
-        logger.info('Validating slots for {}'.format(request_data['name']))
         try:
             validation_tuple = engine.validate_numeric_entity(
                 request_dict['values'],
