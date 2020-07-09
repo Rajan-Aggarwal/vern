@@ -1,5 +1,8 @@
 .DS_STORE
 
+# db related
+*.sqlite3
+
 # Virtualenv related
 bin/
 include/
