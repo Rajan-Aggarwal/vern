@@ -21,6 +21,7 @@ class FiniteValidationJsonParser(parsers.JSONParser):
     schema for finite validation defined in schema
     module
     """
+    JSON_SCHEMA = schemas.finite_values_json
 
     def parse(self, stream, media_type=None, parser_context=None):
         """
@@ -39,7 +40,7 @@ class FiniteValidationJsonParser(parsers.JSONParser):
         )
         # validate the json using the schema
         try:
-            jsonschema.validate(data, schemas.finite_values_json)
+            jsonschema.validate(data, self.JSON_SCHEMA)
         except Exception as error:
             logger.error('Error while validating the json - {}'.format(error))
             raise ValidationError(detail='JSON validation failed. Check logs...')
@@ -59,18 +60,38 @@ class NumericValidationJsonParser(parsers.JSONParser):
     schema for numeric validation defined in schema
     module
     """
+    JSON_SCHEMA = schemas.numeric_values_json
+
     def is_constraint_valid(self, constraint):
         """
         To check if constraint is a valid python expression
         
         :param constraint: a string which is supposed to be a python
             expression
+        :return: a boolean value (true if syntax is correct)
         """
         try:
             ast.parse(constraint)
         except SyntaxError as e:
             return False
         return True
+    
+    def numeric_validation(self, constraint, var_name):
+        """
+        Validate the following conditions:
+            1. the constraint is a python expression
+            2. var_name is present in the expression
+        
+        :param constraint: the conditional expression
+        :param var_name: the variable name upon which constraint is applied
+        """
+        if not self.is_constraint_valid(constraint):
+            logger.error('Constraint is not a valid python expression')
+            raise ValidationError('Constraint should be a valid python expression')
+        if var_name not in constraint:
+            logger.error('Var name is not present in the expression.')
+            raise ValidationError(detail='Var name should be present in the constraint')
+        
 
     def parse(self, stream, media_type=None, parser_context=None):
         """
@@ -89,19 +110,11 @@ class NumericValidationJsonParser(parsers.JSONParser):
         )
         # validate the json using the schema
         try:
-            jsonschema.validate(data, schemas.numeric_values_json)
+            jsonschema.validate(data, self.JSON_SCHEMA)
         except Exception as error:
             logger.error('Error while validating the json - {}'.format(error))
             raise ValidationError(detail='JSON validation failed. Check logs...')
-        # validate if 
-        #   1. the constraint is a python expression
-        #   2. var_name is present in the expression
-        if not self.is_constraint_valid(data['constraint']):
-            logger.error('Constraint is not a valid python expression')
-            raise ValidationError('Constraint should be a valid python expression')
-        if data['var_name'] not in data['constraint']:
-            logger.error('Var name is not present in the expression.')
-            raise ValidationError(detail='Var name should be present in the constraint')
+        self.numeric_validation(data['constraint'], data['var_name'])
         if data['pick_first'] == data['support_mutiple']:
             # both being equal makes no sense
             logger.error('Both pick_first and support_multiple are {}'.format(data['pick_first']))
