@@ -236,3 +236,5 @@ Formatted JSON Data
    }
 }
 ```
+
+NOTE: I didn't understand the usage of entity_type and type key in input JSON so I didn't implement any validations there. Even the method definition was such. More info about implementation can be found in the in-code documentation. 
