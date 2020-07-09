@@ -57,6 +57,8 @@ docker build -t <name>
 docker run -p <port>:8000 <name>
 ```
 
+Image size is 1.01 GB.
+
 Logging is done on stdout only for convenience, you can change it's configurations in the settings.py file. The level is 'INFO' right now.
 
 # End-points
@@ -170,6 +172,8 @@ All inputs and outputs pair from the document are tested with some additional on
 
 Since ast is used, the constraint can be as complex as possible, given it returns a boolean value and is based on a single variable.
 
+### String
+
 ```
 {
     "invalid_trigger": "invalid_age",
@@ -193,7 +197,6 @@ Since ast is used, the constraint can be as complex as possible, given it return
 ```
 
 ```
-Formatted JSON Data
 {
    "filled":true,
    "partially_filled":false,
@@ -203,6 +206,8 @@ Formatted JSON Data
    }
 }
 ```
+
+### List
 
 ```
 {
@@ -237,4 +242,6 @@ Formatted JSON Data
 }
 ```
 
-NOTE: I didn't understand the usage of entity_type and type key in input JSON so I didn't implement any validations there. Even the method definition was such. More info about implementation can be found in the in-code documentation. 
+# NOTES
+
+I didn't understand the usage of entity_type and type key in input JSON so I didn't implement any validations there. Even the method definition was such. More info about implementation can be found in the in-code documentation. 
