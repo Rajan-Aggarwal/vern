@@ -29,6 +29,7 @@ def is_value_valid_finite(
     :param supported_values: a list of values that are valid
     :return: boolean value
     """
+    logger.info('Validating value - {}'.format(value_dict['value']))
     if 'value' not in value_dict:
         logger.error('Dictionary given in value did not have values key.')
         raise SlotValidationError('Values dict cannot have an empty value.')
@@ -124,6 +125,7 @@ def is_value_valid_numeric(
     :return: boolean, whether the value conforms to the constraint
     """
     value = value_dict['value']
+    logger.info('Validating numerically value - {}'.format(value))
     if not numeric_constraint:
         # if no constraint is given, value is assumed to be valid
         return True

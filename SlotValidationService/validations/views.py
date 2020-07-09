@@ -65,6 +65,7 @@ class FiniteValuesValidationView(views.APIView):
         :param request_data: a dictionary of request json
         :return: return the response dict
         """
+        logger.info('Validating slots for {}'.format(request_data['name']))
         try:
             validation_tuple = engine.validate_finite_values_entity(
                 request_data['values'],
@@ -79,6 +80,7 @@ class FiniteValuesValidationView(views.APIView):
                 get_error_response_dict(e.error_msg),
                 status=e.status_code,
             )
+        logger.info('Validation tuple: {}'.format(validation_tuple))
         return self.create_dict_from_validation_tuple(validation_tuple)    
 
     def post(self, request, *args, **kwargs):
@@ -116,6 +118,7 @@ class NumericValuesValidationView(FiniteValuesValidationView):
         :param request_dict: a dictionary of request json
         :return: response dictionary
         """
+        logger.info('Validating slots for {}'.format(request_data['name']))
         try:
             validation_tuple = engine.validate_numeric_entity(
                 request_dict['values'],
@@ -133,6 +136,7 @@ class NumericValuesValidationView(FiniteValuesValidationView):
                 get_error_response_dict(e.error_msg),
                 status=e.status_code,
             )
+        logger.info('Validation tuple: {}'.format(validation_tuple))
         return self.create_dict_from_validation_tuple(validation_tuple)
 
 
