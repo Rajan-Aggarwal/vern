@@ -11,6 +11,7 @@ from rest_framework import views, status
 from . import request_parsers
 from . import engine
 from .engine import SlotValidationResult
+from .slot_validation_error import SlotValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -100,12 +101,38 @@ class FiniteValuesValidationView(views.APIView):
 
 class NumericValuesValidationView(FiniteValuesValidationView):
     """
-    Entity validation performed over numeric values
+    Entity validation performed over numeric values.
+    Inherits FiniteValuesValidation and override the validate_slots
+    method to the numeric validation engine method instead of finite.
     """
     parser_classes = (
         request_parsers.NumericValidationJsonParser,
     )
 
-    # TODO: override validate method
+    def validate_slots(self, request_dict: Dict) -> Dict:
+        """
+        Overrides the validate_slots method of super class.
+
+        :param request_dict: a dictionary of request json
+        :return: response dictionary
+        """
+        try:
+            validation_tuple = engine.validate_numeric_entity(
+                request_dict['values'],
+                request_dict['invalid_trigger'],
+                request_dict['key'],
+                not request_dict['pick_first'], 
+                # this json key is given in the method
+                # definition but not in the request json
+                request_dict['pick_first'],
+                request_dict['constraint'],
+                request_dict['var_name'],
+            )
+        except SlotValidationError as e:
+            return Response(
+                get_error_response_dict(e.error_msg),
+                status=e.status_code,
+            )
+        return self.create_dict_from_validation_tuple(validation_tuple)
 
 

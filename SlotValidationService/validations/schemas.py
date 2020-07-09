@@ -25,7 +25,7 @@ finite_values_json = {
         },
         'supported_values': {
             'type': 'array',
-            'items': {'type': 'string'},
+            'items': {},
         },
         'type': {
             'type': 'array',
@@ -42,9 +42,7 @@ finite_values_json = {
                     'entity_type': {
                         'type': 'string',
                     },
-                    'value': {
-                        'type': ['string', 'number'],
-                    }
+                    'value': {}
                 },
                 'required': ['entity_type', 'value', ],
             }
@@ -95,9 +93,8 @@ numeric_values_json = {
                     'entity_type': {
                         'type': 'string',
                     },
-                    'value': {
-                        'type': ['string', 'number'],
-                    }
+                    # any type is allowed here
+                    'value': {}
                 },
                 'required': ['entity_type', 'value', ],
             }

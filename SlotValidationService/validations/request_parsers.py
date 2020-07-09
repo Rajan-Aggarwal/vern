@@ -34,6 +34,7 @@ class FiniteValidationJsonParser(parsers.JSONParser):
         :param media_type: media type of request
         :param parser_context: to give extra context for parsing
             if required
+        :return: dictionary of request data, if valid
         """
         data = super(FiniteValidationJsonParser, self).parse(
             stream, media_type, parser_context,
@@ -81,6 +82,7 @@ class NumericValidationJsonParser(parsers.JSONParser):
         Validate the following conditions:
             1. the constraint is a python expression
             2. var_name is present in the expression
+        Raise error if validation fails.
         
         :param constraint: the conditional expression
         :param var_name: the variable name upon which constraint is applied
@@ -104,6 +106,7 @@ class NumericValidationJsonParser(parsers.JSONParser):
         :param media_type: media type of request
         :param parser_context: to give extra context for parsing
             if required
+        :return: dictionary of request data, if valid
         """
         data = super(NumericValidationJsonParser, self).parse(
             stream, media_type, parser_context,
@@ -115,13 +118,6 @@ class NumericValidationJsonParser(parsers.JSONParser):
             logger.error('Error while validating the json - {}'.format(error))
             raise ValidationError(detail='JSON validation failed. Check logs...')
         self.numeric_validation(data['constraint'], data['var_name'])
-        if data['pick_first'] == data['support_mutiple']:
-            # both being equal makes no sense
-            logger.error('Both pick_first and support_multiple are {}'.format(data['pick_first']))
-            raise ValidationError(detail='pick_first and support_multiple both cannot be {}'.format(
-                    data['pick_first'],
-                )
-            )
         return data
 
 
